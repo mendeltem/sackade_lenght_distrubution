@@ -3,8 +3,10 @@ rm(list=ls())
 
 library(dplyr)
 library(ggplot2)
-#library(stringr)
-
+library(grid)
+library(jpeg)
+library(stringr)
+library(Hmisc)
 
 source("multiplot.r")
 
@@ -145,11 +147,11 @@ h4 =ggplot(each_image, aes(each_image$mean_fixdur)) +
                                   alpha  = .5) +
   labs(title = "h4 Mean Fixationduration \n for each Image", x="Saccadelength", y = "Number of Images")+
   theme(plot.title = element_text(hjust = 0.5))
-
+h4
 #Aufgabe 1)
 multiplot(plot1,  h1,plot3,  h3, cols=2)
 
 #Aufgabe 2)
 multiplot(plot2,  h2,plot4,h4 ,cols=2)
 
-#rm(list = ls()[!ls() %in% c("df_mean_perfixation_subj", "each_image","all.df","df")])
+rm(list = ls()[!ls() %in% c("df_mean_perfixation_subj", "each_image","all.df","df")])
