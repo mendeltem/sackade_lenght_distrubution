@@ -83,7 +83,7 @@ df_mean_perfixation_subj = df %>% filter(!is.na(dis_x),!is.na(dis_y)) %>%
 
 
 #Plot a graph 
-p1= ggplot(df_mean_perfixation_subj, aes(rownames(df_mean_perfixation_subj), mean_distance)) + 
+plot1= ggplot(df_mean_perfixation_subj, aes(rownames(df_mean_perfixation_subj), mean_distance)) + 
       geom_point(stat="identity",na.rm = TRUE)+
       scale_x_discrete(limits=rownames(df_mean_perfixation_subj))+
       xlab("Subjects")+
@@ -91,7 +91,7 @@ p1= ggplot(df_mean_perfixation_subj, aes(rownames(df_mean_perfixation_subj), mea
       ggtitle("1 Mean Saccadelength \n for each Subject", subtitle = "")+
   theme(plot.title = element_text(hjust = 0.5))
 
-p3 = ggplot(df_mean_perfixation_subj, aes(rownames(df_mean_perfixation_subj), mean_fixdur))+
+plot3 = ggplot(df_mean_perfixation_subj, aes(rownames(df_mean_perfixation_subj), mean_fixdur))+
   geom_point(stat="identity",na.rm = TRUE)+
   scale_x_discrete(limits=rownames(df_mean_perfixation_subj))+
   xlab("Subjects")+
@@ -99,7 +99,7 @@ p3 = ggplot(df_mean_perfixation_subj, aes(rownames(df_mean_perfixation_subj), me
   ggtitle("3 Mean Fixation Duration \n for each Subject", subtitle = "")+
   theme(plot.title = element_text(hjust = 0.5))
 
-p2 = ggplot(each_image, aes(rownames(each_image),mean_distance))+
+plot2 = ggplot(each_image, aes(rownames(each_image),mean_distance))+
   geom_point(stat="identity",na.rm = TRUE)+
   scale_x_discrete((limits=rownames(each_image)))+
   ylab("Mean Saccadlenght")+
@@ -107,7 +107,7 @@ p2 = ggplot(each_image, aes(rownames(each_image),mean_distance))+
   ggtitle("2 Mean Saccadelength \n for each Image \n")+
   theme(plot.title = element_text(hjust = 0.5))
 
-p4 = ggplot(each_image, aes(rownames(each_image),mean_fixdur))+
+plot4 = ggplot(each_image, aes(rownames(each_image),mean_fixdur))+
   geom_point(stat="identity",na.rm = TRUE)+
   scale_x_discrete((limits=rownames(each_image)))+
   ylab("Mean Saccadlenght")+
@@ -149,9 +149,9 @@ h4 =ggplot(each_image, aes(each_image$mean_fixdur)) +
   theme(plot.title = element_text(hjust = 0.5))
 h4
 #Aufgabe 1)
-multiplot(p1,  h1,p3,  h3, cols=2)
+multiplot(plot1,  h1,plot3,  h3, cols=2)
 
 #Aufgabe 2)
-multiplot(p2,  h2,p4,h4 ,cols=2)
+multiplot(plot2,  h2,plot4,h4 ,cols=2)
 
-rm(list = ls()[grep("d_d","h1", ls())])
+rm(list = ls()[!ls() %in% c("df_mean_perfixation_subj", "each_image","all.df","df")])
