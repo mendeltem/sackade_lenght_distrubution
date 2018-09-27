@@ -93,9 +93,9 @@ df_mean_perfixation_subj = df %>% filter(!is.na(dis_x),!is.na(dis_y)) %>%
              median_distance = sqrt(median(dis_x)^2 + median(dis_y)^2),
              min_distance    = sqrt(min(dis_x)^2 + min(dis_y)^2),
              max_distance    = sqrt(max(dis_x)^2 + max(dis_y)^2)
-  ) %>% arrange(mean_distance) %>% filter(mean_fixdur < 600) %>% select(subj, mean_fixdur, mean_distance) 
+  ) %>% filter(mean_fixdur < 600) %>% select(subj, mean_fixdur, mean_distance) 
 #arranged by fixdur
-df_fixdur   = df_mean_perfixation_subj %>% arrange(mean_fixdur)
+df_fixdur   = df_mean_perfixation_subj 
 #Mean Distance for every Subject
 #summarize = df_mean_perfixation_subj %>% summarise(mean_distance = mean(mean_distance))
 
@@ -106,21 +106,25 @@ p1= ggplot(df_mean_perfixation_subj, aes(rownames(df_mean_perfixation_subj), mea
       geom_point(stat="identity",na.rm = TRUE)+
       scale_x_discrete(limits=rownames(df_mean_perfixation_subj))+
       xlab("Subjects")+
-      ylab("Mean Sackade Distance")+
-      ggtitle("Differences in Sackade Length for each Subject", subtitle = "")+
-     scale_x_discrete(breaks=rownames(df_mean_perfixation_subj), labels=df_mean_perfixation_subj$subj )
+      ylab("Mean Saccade Distance")+
+      ggtitle("1 Mean Saccadelength \n for each Subject", subtitle = "")+
+  theme(plot.title = element_text(hjust = 0.5))
+
 p3 = ggplot(df_fixdur, aes(rownames(df_fixdur), mean_fixdur))+
   geom_point(stat="identity",na.rm = TRUE)+
   scale_x_discrete(limits=rownames(df_mean_perfixation_subj))+
   xlab("Subjects")+
   ylab("Mean Fixation Duration")+
-  ggtitle("Mean Fixation Duration Distance for each Subject", subtitle = "")
+  ggtitle("3 Mean Fixation Duration \n for each Subject", subtitle = "")+
+  theme(plot.title = element_text(hjust = 0.5))
+
 p2 = ggplot(each_image, aes(rownames(each_image),mean_distance))+
   geom_point(stat="identity",na.rm = TRUE)+
   scale_x_discrete((limits=rownames(each_image)))+
-  ylab("Mean Sackadlenght")+
+  ylab("Mean Saccadlenght")+
   xlab("Images")+
-  ggtitle("Sackadlength for each Image")
+  ggtitle("2 Mean Saccadelength \n for each Image \n")+
+  theme(plot.title = element_text(hjust = 0.5))
 
 
 
@@ -129,7 +133,9 @@ h1=ggplot(df_mean_perfixation_subj, aes(df_mean_perfixation_subj$mean_distance))
                  col="blue",
                  fill = "red",
                  alpha  = .5) +
-  labs(title = "mean Saccadelength for each Subject", x="Sackade Length", y = "Count")
+  labs(title = "h1 Mean Saccadelength \n for each Subject", x="Saccadelength", y = "Number of Subjects")+
+  theme(plot.title = element_text(hjust = 0.5))
+
 
 
 
@@ -139,11 +145,19 @@ h2 =ggplot(each_image, aes(each_image$mean_distance)) +
                  col="blue",
                  fill = "red",
                  alpha  = .5) +
-  labs(title = "mean Saccadelength for each Image", x="Sackade Length", y = "Count")
+  labs(title = "h2 Mean Saccadelength \n for each Image", x="Saccadelength", y = "Number of Images")+
+  theme(plot.title = element_text(hjust = 0.5))
 
 
+h3 =ggplot(df_mean_perfixation_subj, aes(df_mean_perfixation_subj$mean_fixdur)) + 
+  geom_histogram(breaks =seq(5.5,6.7,by=0.15),
+                 col="blue",
+                 fill = "red",
+                 alpha  = .5) +
+  labs(title = "h3 Mean Fixationduration \n for each Subject", x="Saccadelength", y = "Number of Subject")+
+  theme(plot.title = element_text(hjust = 0.5))
 
-multiplot(p1, p3, p2,h1,h2, cols=3)
+multiplot(p1,  h1,p2,  h2,p3,h3, cols=3)
 
 
 #ggplot(df_mean_perfixation_subj,aes(mean_distance, mean_fixdur), color=subj) + 
