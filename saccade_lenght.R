@@ -1,20 +1,17 @@
 setwd("~/Dokumente/Pychologie/sackade_lenght_distrubution")
 rm(list=ls())
 
-#library(nlme)
-#library(spatstat.data)
-#library(rpart)
+
 library(dplyr)
-#library(mgcv)
-#library(spatstat)
 library(ggplot2)
+
 library(grid)
 library(jpeg)
 library(stringr)
 library(Hmisc)
 
 source("multiplot.r")
-ls(pattern="*.dat")
+
 
 
 # load all the image experiment in one data
@@ -38,10 +35,7 @@ all.df = all.df %>% transform(images = as.numeric(images),
 
 all.df =all.df %>% filter(!is.na(images) | !is.na(xpos) | !is.na(ypos) | !is.na(fixation))
 
-
-
 a= c();b = c();c=c();z=1;n =2;dis_x= c();dis_y= c(); time = 0; dist =c()
-time_t = c()
 #1raw
 for(i in 1:nrow(all.df )){
 
@@ -50,7 +44,6 @@ for(i in 1:nrow(all.df )){
     a = abs(abs(all.df[n, "xpos"]) - abs(all.df[p, "xpos"]))
     b = abs(abs(all.df[n, "ypos"]) - abs(all.df[p, "ypos"]))
     c = sqrt(a^2 + b^2)
-    time = time + all.df[p, "fdur"]
     n = n +1     
   } else{
     z = all.df[i,"trial"] 
@@ -61,19 +54,14 @@ for(i in 1:nrow(all.df )){
     dis_y <-c(dis_y,  0)
     dist <- head(dist, -1)
     dist <- c(dist, 0)
-    time = all.df[i,"fdur"]
   }
   dis_x <-c(dis_x,  a)
   dis_y <-c(dis_y,  b)
   dist  <-c(dist, c)
   
-  time_t <- c(time_t, time)
-  
 }
 
-
 d_d = data.frame((dist))
-d_t = data.frame(time_t)
 
 
 df =bind_cols(all.df,d_d)
@@ -100,7 +88,7 @@ df_fixdur   = df_mean_perfixation_subj
 #summarize = df_mean_perfixation_subj %>% summarise(mean_distance = mean(mean_distance))
 
 
-
+rm(list = ls()[grep("*.dat", ls())])
 #Plot a graph 
 p1= ggplot(df_mean_perfixation_subj, aes(rownames(df_mean_perfixation_subj), mean_distance)) + 
       geom_point(stat="identity",na.rm = TRUE)+
@@ -145,21 +133,28 @@ h2 =ggplot(each_image, aes(each_image$mean_distance)) +
                  col="blue",
                  fill = "red",
                  alpha  = .5) +
-  labs(title = "h2 Mean Saccadelength \n for each Image", x="Saccadelength", y = "Number of Images")+
+  labs(title = "h2 Mean Saccadelength \n for each Image \n", x="Saccadelength", y = "Number of Images")+
   theme(plot.title = element_text(hjust = 0.5))
 
 
 h3 =ggplot(df_mean_perfixation_subj, aes(df_mean_perfixation_subj$mean_fixdur)) + 
-  geom_histogram(breaks =seq(5.5,6.7,by=0.15),
-                 col="blue",
+  geom_histogram(                 col="blue",
                  fill = "red",
                  alpha  = .5) +
   labs(title = "h3 Mean Fixationduration \n for each Subject", x="Saccadelength", y = "Number of Subject")+
   theme(plot.title = element_text(hjust = 0.5))
 
-multiplot(p1,  h1,p2,  h2,p3,h3, cols=3)
+#Aufgabe 1)
+multiplot(p1,  h1,p3,  h3, cols=2)
+
+#Aufgabe 2)
+multiplot(p2,  h2 ,cols=2)
+
 
 
 #ggplot(df_mean_perfixation_subj,aes(mean_distance, mean_fixdur), color=subj) + 
 #  geom_point()+
 #  geom_abline(intercept = 1, slope = 1.3)
+
+
+head(df,-1)
