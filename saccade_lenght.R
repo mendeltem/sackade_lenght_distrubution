@@ -1,18 +1,14 @@
 setwd("~/Dokumente/Pychologie/sackade_lenght_distrubution")
 rm(list=ls())
 
-
 library(dplyr)
 library(ggplot2)
-
 library(grid)
 library(jpeg)
 library(stringr)
 library(Hmisc)
 
 source("multiplot.r")
-
-
 
 # load all the image experiment in one data
 filelist <- list.files(path = "data/",pattern = "fixloc", full.names=T)
@@ -23,6 +19,9 @@ all.df = all.df %>% mutate(images= gsub("[^0-9]"," ",images))
 all.df[1,1] = "images"
 names= c("images","xpos","ypos","fdur","subj","trial","fixation")
 
+
+
+rm(list = ls()[grep("*.dat", ls())])
 names(all.df) = names
 
 all.df = all.df %>% transform(images = as.numeric(images),
@@ -60,10 +59,7 @@ for(i in 1:nrow(all.df )){
   dist  <-c(dist, c)
   
 }
-
 d_d = data.frame((dist))
-
-
 df =bind_cols(all.df,d_d)
 
 
@@ -77,18 +73,15 @@ each_image = df %>% filter(!is.na(dis_x),!is.na(dis_y),!is.na(fdur)) %>% group_b
 df_mean_perfixation_subj = df %>% filter(!is.na(dis_x),!is.na(dis_y)) %>%
   group_by(subj) %>% 
   summarise( mean_fixdur=mean(fdur),
-             mean_distance   = mean(X.dist.),
-             median_distance = sqrt(median(dis_x)^2 + median(dis_y)^2),
-             min_distance    = sqrt(min(dis_x)^2 + min(dis_y)^2),
-             max_distance    = sqrt(max(dis_x)^2 + max(dis_y)^2)
+             mean_distance   = mean(X.dist.)
   ) %>% filter(mean_fixdur < 600) %>% select(subj, mean_fixdur, mean_distance) 
 #arranged by fixdur
-df_fixdur   = df_mean_perfixation_subj 
+#df_fixdur   = df_mean_perfixation_subj 
 #Mean Distance for every Subject
 #summarize = df_mean_perfixation_subj %>% summarise(mean_distance = mean(mean_distance))
 
 
-rm(list = ls()[grep("*.dat", ls())])
+
 #Plot a graph 
 p1= ggplot(df_mean_perfixation_subj, aes(rownames(df_mean_perfixation_subj), mean_distance)) + 
       geom_point(stat="identity",na.rm = TRUE)+
@@ -98,7 +91,7 @@ p1= ggplot(df_mean_perfixation_subj, aes(rownames(df_mean_perfixation_subj), mea
       ggtitle("1 Mean Saccadelength \n for each Subject", subtitle = "")+
   theme(plot.title = element_text(hjust = 0.5))
 
-p3 = ggplot(df_fixdur, aes(rownames(df_fixdur), mean_fixdur))+
+p3 = ggplot(df_mean_perfixation_subj, aes(rownames(df_mean_perfixation_subj), mean_fixdur))+
   geom_point(stat="identity",na.rm = TRUE)+
   scale_x_discrete(limits=rownames(df_mean_perfixation_subj))+
   xlab("Subjects")+
@@ -114,7 +107,13 @@ p2 = ggplot(each_image, aes(rownames(each_image),mean_distance))+
   ggtitle("2 Mean Saccadelength \n for each Image \n")+
   theme(plot.title = element_text(hjust = 0.5))
 
-
+p4 = ggplot(each_image, aes(rownames(each_image),mean_fixdur))+
+  geom_point(stat="identity",na.rm = TRUE)+
+  scale_x_discrete((limits=rownames(each_image)))+
+  ylab("Mean Saccadlenght")+
+  xlab("Images")+
+  ggtitle("4 Mean Fixationduration \n for each Image \n")+
+  theme(plot.title = element_text(hjust = 0.5))
 
 h1=ggplot(df_mean_perfixation_subj, aes(df_mean_perfixation_subj$mean_distance)) + 
   geom_histogram(breaks =seq(4,9,by=0.4),
@@ -123,8 +122,6 @@ h1=ggplot(df_mean_perfixation_subj, aes(df_mean_perfixation_subj$mean_distance))
                  alpha  = .5) +
   labs(title = "h1 Mean Saccadelength \n for each Subject", x="Saccadelength", y = "Number of Subjects")+
   theme(plot.title = element_text(hjust = 0.5))
-
-
 
 
 
@@ -144,17 +141,17 @@ h3 =ggplot(df_mean_perfixation_subj, aes(df_mean_perfixation_subj$mean_fixdur)) 
   labs(title = "h3 Mean Fixationduration \n for each Subject", x="Saccadelength", y = "Number of Subject")+
   theme(plot.title = element_text(hjust = 0.5))
 
+h4 =ggplot(each_image, aes(each_image$mean_fixdur)) + 
+  geom_histogram(                 col="blue",
+                                  fill = "red",
+                                  alpha  = .5) +
+  labs(title = "h4 Mean Fixationduration \n for each Image", x="Saccadelength", y = "Number of Images")+
+  theme(plot.title = element_text(hjust = 0.5))
+h4
 #Aufgabe 1)
 multiplot(p1,  h1,p3,  h3, cols=2)
 
 #Aufgabe 2)
-multiplot(p2,  h2 ,cols=2)
+multiplot(p2,  h2,p4,h4 ,cols=2)
 
-
-
-#ggplot(df_mean_perfixation_subj,aes(mean_distance, mean_fixdur), color=subj) + 
-#  geom_point()+
-#  geom_abline(intercept = 1, slope = 1.3)
-
-
-head(df,-1)
+rm(list = ls()[grep("d_d","h1", ls())])
